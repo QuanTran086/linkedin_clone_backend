@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
-const { Client } = require("pg")
+const cors = require("cors");
+app.use(cors())
+
+const { Client } = require("pg");
 
 const client = new Client({
     host: 'localhost',
@@ -12,4 +15,4 @@ const client = new Client({
 
 client.connect()
 
-app.listen(5000, () => {console.log("Server started on port 5000")});
+app.listen(5000);
