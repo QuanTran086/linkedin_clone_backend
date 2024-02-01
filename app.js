@@ -17,7 +17,16 @@ const client = new Client({
 client.connect()
 
 app.post("/users", async (request, response) => {
-    console.log(request.body)
-})
+    const { username, description, email, password } = request.body;
+
+    const result = await client.query("SELECT MAX(user_id) FROM users");
+    let maxId = result.rows[0].max || 0; 
+    let nextUserId = maxId + 1;
+
+    await client.query("INSERT INTO users (user_id, username, description, email, passwords) VALUES ($1, $2, $3, $4, $5) RETURNING *", [nextUserId, username, description, email, password]);
+
+    response.sendStatus(201); 
+});
+
 
 app.listen(5000);
