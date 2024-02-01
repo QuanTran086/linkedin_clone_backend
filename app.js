@@ -16,7 +16,7 @@ const client = new Client({
 
 client.connect()
 
-app.post("/users", async (request, response) => {
+app.post("/signup", async (request, response) => {
     const { username, description, email, password } = request.body;
 
     const result = await client.query("SELECT MAX(user_id) FROM users");
@@ -27,6 +27,15 @@ app.post("/users", async (request, response) => {
 
     response.sendStatus(201); 
 });
+
+app.post("/login", async (request, response) => {
+    console.log(request.body)
+
+    client.query("SELECT * FROM users", function(err, result) {
+        // console.log(result.rows); 
+
+    });
+})
 
 
 app.listen(5000);
