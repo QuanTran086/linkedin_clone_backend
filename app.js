@@ -32,8 +32,11 @@ app.post("/login", async (request, response) => {
     console.log(request.body)
 
     client.query("SELECT * FROM users", function(err, result) {
-        // console.log(result.rows); 
-
+        for (var i = 0; i < result.rows.length; i++) {
+            if (request.body.email === result.rows[i].email && request.body.passwords === result.rows[i].passwords) {
+                console.log(result.username)
+            }
+        }
     });
 })
 
