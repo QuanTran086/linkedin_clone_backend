@@ -29,16 +29,20 @@ app.post("/signup", async (request, response) => {
 });
 
 app.post("/login", async (request, response) => {
-    console.log(request.body)
+    const { email, password } = request.body;
 
-    client.query("SELECT * FROM users", function(err, result) {
-        for (var i = 0; i < result.rows.length; i++) {
-            if (request.body.email === result.rows[i].email && request.body.passwords === result.rows[i].passwords) {
-                console.log(result.username)
-            }
+    try {
+        const result = await client.query("SELECT * FROM users WHERE email = $1 AND passwords = $2", [email, password]);
+
+        if (result.rows.length > 0) {
+            response.send({ message: "Login successful" });
+        } else {
+            response.send({ message: "Wrong email or password" });
         }
-    });
-})
-
+    } catch (error) {
+        console.error('Error during login:', error);
+        response.status(500).send({ message: "Internal server error" });
+    }
+});
 
 app.listen(5000);
