@@ -18,14 +18,11 @@ client.connect()
 
 app.post("/signup", async (request, response) => {
     const { username, description, email, password } = request.body;
-
-    const result = await client.query("SELECT MAX(user_id) FROM users");
-    let maxId = result.rows[0].max || 0; 
-    let nextUserId = maxId + 1;
-
-    await client.query("INSERT INTO users (user_id, username, description, email, passwords) VALUES ($1, $2, $3, $4, $5) RETURNING *", [nextUserId, username, description, email, password]);
-
-    response.sendStatus(201); 
+    try {
+        const result = await client.query("INSERT INTO users (username, description, email, passwords) VALUES ($1, $2, $3, $4) RETURNING *", [username, description, email, password]);
+    } catch (error) {
+        console.error(error);
+    }
 });
 
 app.post("/login", async (request, response) => {
