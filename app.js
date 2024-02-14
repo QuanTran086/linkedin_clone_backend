@@ -32,13 +32,12 @@ app.post("/login", async (request, response) => {
         const result = await client.query("SELECT * FROM users WHERE email = $1 AND passwords = $2", [email, password]);
 
         if (result.rows.length > 0) {
-            response.send({ message: "Login successful" });
+            response.sendStatus(200)
         } else {
-            response.send({ message: "Wrong email or password" });
+            response.sendStatus(404)
         }
     } catch (error) {
-        console.error('Error during login:', error);
-        response.status(500).send({ message: "Internal server error" });
+        response.status(500)
     }
 });
 
