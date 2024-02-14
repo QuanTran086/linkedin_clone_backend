@@ -41,4 +41,26 @@ app.post("/login", async (request, response) => {
     }
 });
 
+app.post("/update-password", async (request, response) => {
+    const { currentPassword, newPassword, confirmedPassword } = request.body;
+    
+    if (newPassword !== confirmedPassword) {
+        return response.status(400).send('New passwords do not match.');
+    }
+
+    try {
+        const result = await client.query("SELECT * FROM users WHERE passwords = $1", [currentPassword]);
+
+        if (result.rows.length > 0) {
+            await client.query("UPDATE users SET passwords = $1, updated_date = NOW() WHERE passwords = $2", [newPassword, currentPassword]);
+            response.sendStatus(200)
+        } else {
+            response.sendStatus(404);
+        }
+    } catch (error) {
+        console.error('Error updating password:', error);
+        response.sendStatus(500);
+    }
+});
+
 app.listen(5000);
