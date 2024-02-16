@@ -63,4 +63,9 @@ app.post("/update-password", async (request, response) => {
     }
 });
 
+app.get("/posts", async (request, response) => {
+    const result = await client.query("SELECT * FROM posts")
+    response.json(result.rows)
+})
+
 app.listen(5000);
