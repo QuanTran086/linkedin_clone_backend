@@ -32,6 +32,8 @@ app.post("/login", async (request, response) => {
         const result = await client.query("SELECT * FROM users WHERE email = $1 AND passwords = $2", [email, password]);
 
         if (result.rows.length > 0) {
+            const user = result.rows[0];
+            response.json({ username: user.username, description: user.description });
             response.sendStatus(200)
         } else {
             response.sendStatus(404)
