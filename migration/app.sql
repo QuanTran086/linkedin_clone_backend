@@ -43,3 +43,24 @@ CREATE TABLE post_comment (
 	FOREIGN KEY (user_id) REFERENCES users(user_id),
 	FOREIGN KEY (post_id) REFERENCES posts(post_id)
 );
+
+SELECT * FROM users
+
+SELECT * FROM posts
+
+INSERT INTO posts (post_id, post_content, like_count, comment_count, repost_count, repost_id, created_date, updated_date, user_id) 
+VALUES (1, 'Funny Difference between C & C++', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
+
+INSERT INTO posts (post_id, post_content, like_count, comment_count, repost_count, repost_id, created_date, updated_date, user_id) 
+VALUES (2, 'Ghosting needs to stop.', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
+
+SELECT 
+	users.username, 
+	users.description, 
+	posts.post_content, 
+	posts.like_count, 
+	posts.comment_count, 
+	posts.repost_count
+FROM posts 
+JOIN users 
+ON posts.user_id =  users.user_id
