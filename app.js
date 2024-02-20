@@ -66,7 +66,7 @@ app.post("/update-password", async (request, response) => {
 });
 
 app.get("/posts", async (request, response) => {
-    const result = await client.query("SELECT users.username, users.description, posts.post_content, posts.like_count, posts.comment_count, posts.repost_count FROM posts JOIN users ON posts.user_id = users.user_id")
+    const result = await client.query("SELECT users.username, users.description, posts.post_content, posts.like_count, posts.comment_count, posts.repost_count FROM posts FULL OUTER JOIN users ON posts.user_id = users.user_id")
     response.json(result.rows)
 })
 
