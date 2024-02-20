@@ -48,11 +48,11 @@ SELECT * FROM users
 
 SELECT * FROM posts
 
-INSERT INTO posts (post_id, post_content, like_count, comment_count, repost_count, repost_id, created_date, updated_date, user_id) 
-VALUES (1, 'Funny Difference between C & C++', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
+INSERT INTO posts (post_content, like_count, comment_count, repost_count, repost_id, created_date, updated_date, user_id) 
+VALUES ('Funny Difference between C & C++', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
 
-INSERT INTO posts (post_id, post_content, like_count, comment_count, repost_count, repost_id, created_date, updated_date, user_id) 
-VALUES (2, 'Ghosting needs to stop.', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
+INSERT INTO posts (post_content, like_count, comment_count, repost_count, repost_id, created_date, updated_date, user_id) 
+VALUES ('Ghosting needs to stop.', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2)
 
 SELECT 
 	users.username, 
@@ -62,5 +62,5 @@ SELECT
 	posts.comment_count, 
 	posts.repost_count
 FROM posts 
-JOIN users 
+FULL OUTER JOIN users 
 ON posts.user_id =  users.user_id
