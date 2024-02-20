@@ -62,5 +62,5 @@ SELECT
 	posts.comment_count, 
 	posts.repost_count
 FROM posts 
-FULL OUTER JOIN users 
+JOIN users 
 ON posts.user_id =  users.user_id
