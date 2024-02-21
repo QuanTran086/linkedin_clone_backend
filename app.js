@@ -33,7 +33,7 @@ app.post("/login", async (request, response) => {
 
         if (result.rows.length > 0) {
             const user = result.rows[0];
-            response.json({ username: user.username, description: user.description });
+            response.json({ username: user.username, description: user.description, user_id: user.user_id });
             response.sendStatus(200)
         } else {
             response.sendStatus(404)
@@ -68,6 +68,10 @@ app.post("/update-password", async (request, response) => {
 app.get("/posts", async (request, response) => {
     const result = await client.query("SELECT users.username, users.description, posts.post_content, posts.like_count, posts.comment_count, posts.repost_count FROM posts JOIN users ON posts.user_id = users.user_id")
     response.json(result.rows)
+})
+
+app.post("/posts", async (request, response) => {
+    console.log(request.body)
 })
 
 app.listen(5000);
