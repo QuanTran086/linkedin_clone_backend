@@ -21,7 +21,7 @@ app.post("/signup", async (request, response) => {
     try {
         const result = await client.query("INSERT INTO users (username, description, email, passwords) VALUES ($1, $2, $3, $4) RETURNING *", [username, description, email, password]);
     } catch (error) {
-        console.error(error);
+        response.sendStatus(500)
     }
 });
 
@@ -39,7 +39,7 @@ app.post("/login", async (request, response) => {
             response.sendStatus(404)
         }
     } catch (error) {
-        response.status(500)
+        response.sendStatus(500)
     }
 });
 
@@ -60,7 +60,6 @@ app.post("/update-password", async (request, response) => {
             response.sendStatus(404);
         }
     } catch (error) {
-        console.error('Error updating password:', error);
         response.sendStatus(500);
     }
 });
@@ -71,7 +70,16 @@ app.get("/posts", async (request, response) => {
 })
 
 app.post("/posts", async (request, response) => {
+    const { postContent, likeCount, commentCount, repostCount, repostId, userId } = request.body
+
     console.log(request.body)
+
+    try {
+        const result = await client.query("INSERT INTO posts (post_content, like_count, comment_count, repost_count, repost_id, user_id, created_date, updated_date) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *", [postContent, likeCount, commentCount, repostCount, repostId, userId]);
+        response.sendStatus(200)
+    } catch (error) {
+        response.sendStatus(500)
+    }
 })
 
 app.listen(5000);
