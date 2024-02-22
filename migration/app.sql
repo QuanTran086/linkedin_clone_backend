@@ -48,12 +48,6 @@ SELECT * FROM users
 
 SELECT * FROM posts
 
-INSERT INTO posts (post_content, like_count, comment_count, repost_count, repost_id, created_date, updated_date, user_id) 
-VALUES ('Funny Difference between C & C++', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
-
-INSERT INTO posts (post_content, like_count, comment_count, repost_count, repost_id, created_date, updated_date, user_id) 
-VALUES ('Ghosting needs to stop.', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2)
-
 SELECT 
 	users.username, 
 	users.description, 
