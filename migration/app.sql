@@ -16,7 +16,7 @@ CREATE TABLE posts (
 	like_count INT DEFAULT 0,
 	comment_count INT DEFAULT 0,
 	repost_count INT DEFAULT 0,
-	repost_id INT,
+	repost_id INT DEFAULT 0,
 	created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user_id INT NOT NULL,
