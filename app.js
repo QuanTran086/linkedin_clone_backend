@@ -69,10 +69,10 @@ app.get("/posts", async (request, response) => {
 })
 
 app.post("/posts", async (request, response) => {
-    const { postContent, likeCount, commentCount, repostCount, repostId, userId } = request.body
+    const { postContent, userId } = request.body
 
     try {
-        const result = await client.query("INSERT INTO posts (post_content, like_count, comment_count, repost_count, repost_id, user_id, created_date, updated_date) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *", [postContent, likeCount, commentCount, repostCount, repostId, userId]);
+        const result = await client.query("INSERT INTO posts (post_content, user_id) VALUES ($1, $2) RETURNING *", [postContent, userId]);
         response.sendStatus(200)
     } catch (error) {
         response.sendStatus(500)
