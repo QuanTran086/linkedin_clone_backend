@@ -79,4 +79,23 @@ app.post("/posts", async (request, response) => {
     }
 })
 
+app.post("/like", async (request, response) => {
+    const { post_id, user_id, isLiked } = request.body
+
+    try {
+        if (isLiked) {
+            await client.query("INSERT INTO post_like (user_id, post_id) VALUES ($1, $2) RETURNING *", [user_id, post_id])
+            await client.query("UPDATE posts SET like_count = like_count + 1 WHERE post_id = $1 RETURNING*", [post_id])
+            const result = await client.query("SELECT like_count FROM posts")
+            response.sendStatus(200).send(result)
+            console.log(result)
+        } else {
+
+        }
+    } catch (error) {
+        response.sendStatus(500)
+    }
+})
+
+
 app.listen(5000);
