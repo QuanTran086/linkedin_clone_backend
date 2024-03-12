@@ -27,6 +27,7 @@ CREATE TABLE post_like (
 	like_id SERIAL PRIMARY KEY,
 	created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	status VARCHAR(225),
 	user_id INT,
 	post_id INT,
 	FOREIGN KEY (user_id) REFERENCES users(user_id),
