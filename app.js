@@ -80,22 +80,24 @@ app.post("/posts", async (request, response) => {
 })
 
 app.post("/like", async (request, response) => {
-    const { post_id, user_id, isLiked } = request.body
+    const { post_id, user_id, status } = request.body; 
 
     try {
-        if (isLiked) {
+        if (status) {
             await client.query("INSERT INTO post_like (user_id, post_id) VALUES ($1, $2) RETURNING *", [user_id, post_id])
-            await client.query("UPDATE posts SET like_count = like_count + 1 WHERE post_id = $1 RETURNING*", [post_id])
-            const result = await client.query("SELECT like_count FROM posts")
-            response.sendStatus(200).send(result)
-            console.log(result)
+            await client.query("UPDATE posts SET like_count = like_count + 1 WHERE post_id = $1", [post_id]);
         } else {
-
+            await client.query("DELETE FROM post_like WHERE user_id = $1 AND post_id = $2", [user_id, post_id]);
+            await client.query("UPDATE posts SET like_count = like_count - 1 WHERE post_id = $1", [post_id]); 
         }
+        const result = await client.query("SELECT like_count FROM posts WHERE post_id = $1", [post_id]);
+        response.status(200).json(result.rows[0]); 
     } catch (error) {
-        response.sendStatus(500)
+        console.error(error);
+        response.sendStatus(500);
     }
-})
+});
+
 
 
 app.listen(5000);
