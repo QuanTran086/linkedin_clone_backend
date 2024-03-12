@@ -1,0 +1,11 @@
+POST http://localhost:5000/signup
+
+POST http://localhost:5000/login
+
+POST http://localhost:5000/update-password
+
+GET http://localhost:5000/posts
+
+POST http://localhost:5000/posts
+
+POST http://localhost:5000/like
