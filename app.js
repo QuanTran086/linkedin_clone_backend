@@ -80,16 +80,23 @@ app.post("/posts", async (request, response) => {
 })
 
 app.post("/like", async (request, response) => {
-    const { post_id, user_id, status } = request.body; 
+    const { post_id, user_id, status } = request.body;
 
     try {
+        const existingLikeResult = await client.query("SELECT * FROM post_like WHERE user_id = $1 AND post_id = $2", [user_id, post_id]);
+        
+        if (existingLikeResult.rows.length > 0) {
+            await client.query("UPDATE post_like SET status = $1 WHERE user_id = $2 AND post_id = $3", [status, user_id, post_id]);
+        } else {
+            await client.query("INSERT INTO post_like (status, user_id, post_id) VALUES ($1, $2, $3) RETURNING *", [status, user_id, post_id]);
+        }
+
         if (status) {
-            await client.query("INSERT INTO post_like (user_id, post_id) VALUES ($1, $2) RETURNING *", [user_id, post_id])
             await client.query("UPDATE posts SET like_count = like_count + 1 WHERE post_id = $1", [post_id]);
         } else {
-            await client.query("DELETE FROM post_like WHERE user_id = $1 AND post_id = $2", [user_id, post_id]);
-            await client.query("UPDATE posts SET like_count = like_count - 1 WHERE post_id = $1", [post_id]); 
+            await client.query("UPDATE posts SET like_count = GREATEST(like_count - 1, 0) WHERE post_id = $1", [post_id]); 
         }
+
         const result = await client.query("SELECT like_count FROM posts WHERE post_id = $1", [post_id]);
         response.status(200).json(result.rows[0]); 
     } catch (error) {
@@ -97,7 +104,6 @@ app.post("/like", async (request, response) => {
         response.sendStatus(500);
     }
 });
-
 
 
 app.listen(5000);
