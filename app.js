@@ -107,5 +107,11 @@ app.post("/like", async (request, response) => {
     }
 });
 
+app.post("/comment", async (request, response) => {
+    const { commentContent, user_id, post_id } = request.body
+    
+    
+})
+
 
 app.listen(5000);
