@@ -66,7 +66,7 @@ app.post("/update-password", async (request, response) => {
 app.post("/rendering-posts", async (request, response) => {
     const { user_id } = request.body
 
-    const result = await client.query("SELECT users.username, users.description, users.user_id, post_like.status, posts.post_id, posts.post_content, posts.like_count, posts.comment_count, posts.repost_count, posts.created_date FROM posts JOIN users ON posts.user_id = users.user_id JOIN post_like ON posts.post_id = post_like.post_id WHERE posts.user_id = $1", [user_id])
+    const result = await client.query("SELECT users.username, users.description, users.user_id, post_like.status, posts.post_id, posts.post_content, posts.like_count, posts.comment_count, posts.repost_count, posts.created_date FROM posts LEFT JOIN users ON posts.user_id = users.user_id LEFT JOIN post_like ON posts.post_id = post_like.post_id WHERE posts.user_id = $1", [user_id])
     response.json(result.rows)
 })
 
