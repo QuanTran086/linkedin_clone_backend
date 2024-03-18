@@ -99,7 +99,7 @@ app.post("/rendering-posts", async (request, response) => {
             users.username, 
             users.description, 
             users.user_id, 
-            post_like.status, 
+            COALESCE(post_like.status, false) as status,
             posts.post_id, 
             posts.post_content, 
             posts.like_count, 
