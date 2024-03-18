@@ -206,7 +206,26 @@ app.post("/like", async (request, response) => {
 app.post("/comment", async (request, response) => {
     const { commentContent, user_id, post_id } = request.body
     
-    
+    try {
+        await client.query(
+            `INSERT INTO 
+                post_comment (comment_content, user_id, post_id) 
+            VALUES 
+                ($1, $2, $3) RETURNING *`, 
+            [commentContent, user_id, post_id]);
+        
+        await client.query(
+            `UPDATE 
+                posts 
+            SET 
+                comment_count = comment_count + 1 
+            WHERE 
+                post_id = $1`,
+            [post_id])
+        response.sendStatus(200)
+    } catch (error) {
+        response.sendStatus(500)
+    }
 })
 
 
