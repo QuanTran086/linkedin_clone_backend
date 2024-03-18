@@ -116,7 +116,7 @@ app.post("/rendering-posts", async (request, response) => {
             post_like 
         ON 
             posts.post_id = post_like.post_id 
-        WHERE 
+        AND
             posts.user_id = $1`, 
         [user_id])
     response.json(result.rows)
