@@ -96,28 +96,36 @@ app.post("/rendering-posts", async (request, response) => {
 
     const result = await client.query(
         `SELECT 
-            users.username, 
-            users.description, 
-            users.user_id, 
-            COALESCE(post_like.status, false) as status,
-            posts.post_id, 
-            posts.post_content, 
-            posts.like_count, 
-            posts.comment_count, 
-            posts.repost_count, 
-            posts.created_date 
-        FROM 
-            posts 
-        LEFT JOIN 
-            users 
-        ON 
-            posts.user_id = users.user_id 
-        LEFT JOIN 
-            post_like 
-        ON 
-            posts.post_id = post_like.post_id 
-        AND
-            posts.user_id = $1`, 
+        users.username, 
+        users.description, 
+        users.user_id, 
+        COALESCE(post_like.status, false) as status,
+        post_comment.comment_content,
+        posts.post_id, 
+        posts.post_content, 
+        posts.like_count, 
+        posts.comment_count, 
+        posts.repost_count, 
+        posts.created_date 
+    FROM 
+        posts 
+    LEFT JOIN 
+        users 
+    ON 
+        posts.user_id = users.user_id 
+    LEFT JOIN 
+        post_like 
+    ON 
+        posts.post_id = post_like.post_id 
+    LEFT JOIN 
+        post_comment
+    ON
+        posts.post_id = post_comment.post_id
+    WHERE
+        posts.user_id = $1
+    ORDER BY
+        post_comment.comment_content DESC
+    LIMIT 1`, 
         [user_id])
     response.json(result.rows)
 })
