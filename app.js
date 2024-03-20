@@ -124,7 +124,7 @@ app.post("/rendering-posts", async (request, response) => {
     WHERE
         posts.user_id = $1
     ORDER BY
-        post_comment.comment_content DESC
+        post_comment.created_date DESC
     LIMIT 1`, 
         [user_id])
     response.json(result.rows)
@@ -230,7 +230,7 @@ app.post("/comment", async (request, response) => {
             WHERE 
                 post_id = $1`,
             [post_id])
-        response.sendStatus(200)
+        response.json(commentContent)
     } catch (error) {
         response.sendStatus(500)
     }
