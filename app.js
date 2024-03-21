@@ -101,6 +101,7 @@ app.post("/rendering-posts", async (request, response) => {
         users.user_id, 
         COALESCE(post_like.status, false) as status,
         post_comment.comment_content,
+        post_comment.comment_id,
         posts.post_id, 
         posts.post_content, 
         posts.like_count, 
@@ -236,5 +237,34 @@ app.post("/comment", async (request, response) => {
     }
 })
 
+app.post("/delete-comment", async (request, response) => {
+    const { comment_id, post_id } = request.body
+
+    try {   
+        await client.query(
+            `DELETE FROM 
+                post_comment 
+            WHERE
+                comment_id = $1`,
+            [comment_id]);
+        
+        await client.query(
+            `UPDATE 
+                posts 
+            SET 
+                comment_count = GREATEST(comment_count - 1, 0) 
+            WHERE post_id = $1`, 
+            [post_id]);
+        
+        const result = await client.query(
+            `SELECT comment_count FROM posts WHERE post_id = $1`,
+            [post_id]);
+
+        response.json(result.rows[0].comment_count)
+    } catch (error) {
+        console.log(error)
+        response.sendStatus(500)
+    }
+})
 
 app.listen(5000);
