@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -15,6 +16,11 @@ const client = new Client({
 })
 
 client.connect()
+
+// app.use((request, response, next) => {
+//     console.log("Middleware")
+//     next();
+// })
 
 app.post("/signup", async (request, response) => {
     const { username, description, email, password } = request.body;
@@ -267,4 +273,6 @@ app.post("/delete-comment", async (request, response) => {
     }
 })
 
-app.listen(5000);
+const port = process.env.PORT || 4000;
+
+app.listen(port, () => {console.log(`Server is listening on port ${port}`)});
