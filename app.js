@@ -131,8 +131,7 @@ app.post("/rendering-posts", async (request, response) => {
     WHERE
         posts.user_id = $1
     ORDER BY
-        post_comment.created_date DESC
-    LIMIT 1`, 
+        posts.created_date DESC`, 
         [user_id])
     response.json(result.rows)
 })
@@ -272,6 +271,47 @@ app.post("/delete-comment", async (request, response) => {
         response.sendStatus(500)
     }
 })
+
+app.post("/repost", async (request, response) => {
+    const { post_id } = request.body;
+
+    try {
+        await client.query(
+            `UPDATE 
+                posts 
+            SET 
+                repost_count = repost_count + 1 
+            WHERE 
+                post_id = $1`, 
+            [post_id]
+        );
+
+        const originalPost = await client.query(
+            `SELECT 
+                post_content, post_image, like_count, comment_count, repost_count 
+            FROM 
+                posts 
+            WHERE 
+                post_id = $1`, 
+            [post_id]
+        );
+
+        await client.query(
+            `INSERT INTO 
+                posts (post_content, post_image, like_count, comment_count, repost_count, user_id, repost_id) 
+            VALUES 
+                ($1, $2, $3, $4, $5, $6, $7) 
+            RETURNING *`, 
+            [originalPost.rows[0].post_content, originalPost.rows[0].post_image, originalPost.rows[0].like_count, originalPost.rows[0].comment_count, originalPost.rows[0].repost_count, user_id, originalPost.rows[0].post_id] 
+        )
+
+        response.status(200)
+    } catch (error) {
+        console.error(error);
+        response.sendStatus(500);
+    }
+});
+
 
 const port = process.env.PORT || 4000;
 
