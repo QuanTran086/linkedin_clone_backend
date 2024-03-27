@@ -1,31 +1,15 @@
 require("dotenv").config();
+const db = require("./database")
 const express = require("express");
 const app = express();
 const cors = require("cors");
 app.use(cors())
 app.use(express.json())
 
-const { Client } = require("pg");
-
-const client = new Client({
-    host: 'localhost',
-    port: 5432,
-    database: 'linkedin_clone',
-    user: 'postgres',
-    password: '1234'
-})
-
-client.connect()
-
-// app.use((request, response, next) => {
-//     console.log("Middleware")
-//     next();
-// })
-
 app.post("/signup", async (request, response) => {
     const { username, description, email, password } = request.body;
     try {
-        const result = await client.query(
+        await db.query(
             `INSERT INTO 
                 users (username, description, email, passwords) 
             VALUES 
@@ -41,7 +25,7 @@ app.post("/login", async (request, response) => {
     const { email, password } = request.body;
 
     try {
-        const result = await client.query(
+        const result = await db.query(
             `SELECT 
                 * 
             FROM 
@@ -69,7 +53,7 @@ app.post("/update-password", async (request, response) => {
     }
 
     try {
-        const result = await client.query(
+        const result = await db.query(
             `SELECT 
                 * 
             FROM 
@@ -79,7 +63,7 @@ app.post("/update-password", async (request, response) => {
             [currentPassword]);
 
         if (result.rows.length > 0) {
-            await client.query(
+            await db.query(
                 `UPDATE 
                     users 
                 SET 
@@ -100,7 +84,7 @@ app.post("/update-password", async (request, response) => {
 app.post("/rendering-posts", async (request, response) => {
     const { user_id } = request.body
 
-    const result = await client.query(
+    const result = await db.query(
         `SELECT 
         users.username, 
         users.description, 
@@ -140,7 +124,7 @@ app.post("/posts", async (request, response) => {
     const { postContent, userId } = request.body
 
     try {
-        const result = await client.query(
+        const result = await db.query(
             `INSERT INTO 
                 posts (post_content, user_id) 
             VALUES 
@@ -156,7 +140,7 @@ app.post("/like", async (request, response) => {
     const { post_id, user_id, status } = request.body;
 
     try {
-        const existingLikeResult = await client.query(
+        const existingLikeResult = await db.query(
             `SELECT 
                 * 
             FROM 
@@ -166,7 +150,7 @@ app.post("/like", async (request, response) => {
             [user_id, post_id])
         
         if (existingLikeResult.rows.length > 0) {
-            await client.query(
+            await db.query(
                 `UPDATE 
                     post_like 
                 SET 
@@ -175,7 +159,7 @@ app.post("/like", async (request, response) => {
                     user_id = $2 AND post_id = $3`, 
                 [status, user_id, post_id]);
         } else {
-            await client.query(
+            await db.query(
                 `INSERT INTO 
                     post_like (status, user_id, post_id) 
                 VALUES 
@@ -184,7 +168,7 @@ app.post("/like", async (request, response) => {
         }
 
         if (status) {
-            await client.query(
+            await db.query(
                 `UPDATE 
                     posts 
                 SET 
@@ -193,7 +177,7 @@ app.post("/like", async (request, response) => {
                     post_id = $1`, 
                 [post_id]);
         } else {
-            await client.query(
+            await db.query(
                 `UPDATE 
                     posts 
                 SET 
@@ -202,7 +186,7 @@ app.post("/like", async (request, response) => {
                 [post_id]); 
         }
 
-        const result = await client.query(
+        const result = await db.query(
             `SELECT 
                 like_count 
             FROM 
@@ -221,14 +205,14 @@ app.post("/comment", async (request, response) => {
     const { commentContent, user_id, post_id } = request.body
     
     try {
-        await client.query(
+        await db.query(
             `INSERT INTO 
                 post_comment (comment_content, user_id, post_id) 
             VALUES 
                 ($1, $2, $3) RETURNING *`, 
             [commentContent, user_id, post_id]);
         
-        await client.query(
+        await db.query(
             `UPDATE 
                 posts 
             SET 
@@ -246,14 +230,14 @@ app.post("/delete-comment", async (request, response) => {
     const { comment_id, post_id } = request.body
 
     try {   
-        await client.query(
+        await db.query(
             `DELETE FROM 
                 post_comment 
             WHERE
                 comment_id = $1`,
             [comment_id]);
         
-        await client.query(
+        await db.query(
             `UPDATE 
                 posts 
             SET 
@@ -261,7 +245,7 @@ app.post("/delete-comment", async (request, response) => {
             WHERE post_id = $1`, 
             [post_id]);
         
-        const result = await client.query(
+        const result = await db.query(
             `SELECT comment_count FROM posts WHERE post_id = $1`,
             [post_id]);
 
@@ -276,7 +260,7 @@ app.post("/repost", async (request, response) => {
     const { post_id } = request.body;
 
     try {
-        await client.query(
+        await db.query(
             `UPDATE 
                 posts 
             SET 
@@ -286,7 +270,7 @@ app.post("/repost", async (request, response) => {
             [post_id]
         );
 
-        const originalPost = await client.query(
+        const originalPost = await db.query(
             `SELECT 
                 post_content, post_image, like_count, comment_count, repost_count 
             FROM 
@@ -296,7 +280,7 @@ app.post("/repost", async (request, response) => {
             [post_id]
         );
 
-        await client.query(
+        await db.query(
             `INSERT INTO 
                 posts (post_content, post_image, like_count, comment_count, repost_count, user_id, repost_id) 
             VALUES 
