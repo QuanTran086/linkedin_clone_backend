@@ -27,7 +27,7 @@ Visit http://localhost:5000
   - /profile
 
 ## Database Design
-![Screenshot 2024-03-30 190720](https://github.com/QuanTran086/linkedin_clone_backend/assets/130350185/ccb27ec7-d1d5-44da-a966-e1a6172a6e9d)
+![Screenshot 2024-06-10 170539](https://github.com/QuanTran086/linkedin_clone_backend/assets/130350185/3169e7e5-ffd3-4792-a9a5-08b77e1dc2ab)
 
 ## Installation
 - Clone the repository
